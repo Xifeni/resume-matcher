@@ -1,0 +1,11 @@
+vllm>=0.4.2
+openai
+sentence-transformers
+pdfplumber
+nest_asyncio
+fastapi
+uvicorn
+pydantic
+requests
+torch --index-url https://download.pytorch.org/whl/cu121
+flask

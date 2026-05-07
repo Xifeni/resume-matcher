@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  vllm:
+    build: .
+    container_name: vllm_service
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    command: python3 -m vllm.entrypoints.openai.api_server --model TheBloke/Llama-2-7B-Chat-AWQ --quantization awq --gpu-memory-utilization 0.85 --served-model-name llama-2-7b --max-model-len 1024 --enforce-eager --host 0.0.0.0 --chat-template "{% for message in messages %}{% if message['role'] == 'user' %}{{ '[INST] ' + message['content'] + ' [/INST]' }}{% elif message['role'] == 'system' %}{{ '<<SYS>>\\n' + message['content'] + '\\n<</SYS>>\\n\\n' }}{% elif message['role'] == 'assistant' %}{{ ' ' + message['content'] + ' ' }}{% endif %}{% endfor %}"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ~/.cache/huggingface:/root/.cache/huggingface
+    ipc: host
+
+  app:
+    build: .
+    container_name: flask_app
+    environment:
+      - VLLM_URL=http://vllm:8000/v1
+    ports:
+      - "5000:5000"
+    command: python3 app.py
+    depends_on:
+      - vllm
