@@ -9,3 +9,4 @@ pydantic
 requests
 torch --index-url https://download.pytorch.org/whl/cu121
 flask
+Flask-CORS
