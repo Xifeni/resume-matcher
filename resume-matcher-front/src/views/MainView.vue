@@ -2,8 +2,8 @@
   <el-container :class="$style.layoutContainer">
     <el-aside :width="isCollapsed ? '64px' : '250px'" :class="$style.asideMenu">
       <div :class="$style.logoContainer">
-        <h3 v-if="!isCollapsed">My Application</h3>
-        <h3 v-else>App</h3>
+        <h3 v-if="!isCollapsed">Resume matcher</h3>
+        <h3 v-else>RM</h3>
       </div>
 
       <el-menu
@@ -265,12 +265,12 @@ const handleMenuSelect = (index: string) => {
 const handleFileUpload = (file: any) => {
   if (!file || !file.raw) return;
 
-  if (uploadType.value === 'resume') {
+  if (uploadType.value === "resume") {
     fileStore.setResume(file.raw);
-    activeTab.value = 'resume';
-  } else if (uploadType.value === 'vacancy') {
+    activeTab.value = "resume";
+  } else if (uploadType.value === "vacancy") {
     fileStore.setVacancy(file.raw);
-    activeTab.value = 'vacancy';
+    activeTab.value = "vacancy";
   }
 
   uploadDialogVisible.value = false;
@@ -289,10 +289,10 @@ const toggleSidebar = () => {
 const handlePredict = async () => {
   try {
     await fileStore.runPredict();
-    ElMessage.success('Prediction complete!');
-    activeTab.value = 'result';
+    ElMessage.success("Prediction complete!");
+    activeTab.value = "result";
   } catch (e) {
-    ElMessage.error('Error during prediction');
+    ElMessage.error("Error during prediction");
   }
 };
 
