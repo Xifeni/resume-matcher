@@ -72,7 +72,6 @@
     </el-aside>
 
     <el-container>
-      <!-- Header (без изменений) -->
       <el-header :class="$style.header">
         <el-button
           @click="toggleSidebar"
@@ -159,7 +158,6 @@
                 </el-col>
               </el-row>
 
-              <!-- Карточка с обоснованием -->
               <el-card shadow="never" :class="$style.reasoningCard">
                 <template #header>
                   <div class="card-header">
@@ -244,7 +242,6 @@ const canPredict = computed(
   () => fileStore.resumeFile && fileStore.vacancyFile,
 );
 
-// Цветовая схема для прогресс-баров: от красного к зеленому
 const scoreColors = [
   { color: "#f56c6c", percentage: 40 },
   { color: "#e6a23c", percentage: 70 },
