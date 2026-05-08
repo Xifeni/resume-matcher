@@ -1,3 +1,3 @@
 window.__ENV__ = {
-  VITE_API_URL: "http://localhost:5000",
+  VITE_API_URL: "", // Должно быть пусто для локальной разработки!
 };
