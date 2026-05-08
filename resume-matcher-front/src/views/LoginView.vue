@@ -1,7 +1,7 @@
 <template>
-  <div class="login-container">
-    <el-card class="login-card">
-      <h2 class="login-title">Sign In</h2>
+  <div :class="$style.loginContainer">
+    <el-card :class="$style.loginCard">
+      <h2 :class="$style.loginTitle">Sign In</h2>
       <el-form :model="form" @submit.prevent="handleLogin">
         <el-form-item>
           <el-input
@@ -25,7 +25,7 @@
           <el-button
             type="primary"
             native-type="submit"
-            class="submit-btn"
+            :class="$style.submitBtn"
             :loading="isLoading"
           >
             Log In
@@ -70,23 +70,23 @@ const handleLogin = async () => {
 };
 </script>
 
-<style scoped>
-.login-container {
+<style module>
+.loginContainer {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   background-color: #f3f4f6;
 }
-.login-card {
+.loginCard {
   width: 100%;
   max-width: 400px;
 }
-.login-title {
+.loginTitle {
   text-align: center;
   margin-bottom: 20px;
 }
-.submit-btn {
+.submitBtn {
   width: 100%;
 }
 </style>

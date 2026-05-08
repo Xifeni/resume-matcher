@@ -28,3 +28,15 @@ services:
     command: python3 app.py
     depends_on:
       - vllm
+
+  frontend:
+    build:
+      context: ./resume-matcher-front
+      dockerfile: Dockerfile
+    container_name: vue_frontend
+    ports:
+      - "8080:80"
+    environment:
+      - VITE_API_URL=http://localhost:5000
+    depends_on:
+      - app
