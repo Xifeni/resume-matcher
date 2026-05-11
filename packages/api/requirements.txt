@@ -2,6 +2,7 @@ vllm>=0.4.2
 openai
 sentence-transformers
 pdfplumber
+python-docx
 nest_asyncio
 fastapi
 uvicorn
@@ -10,3 +11,4 @@ requests
 torch --index-url https://download.pytorch.org/whl/cu121
 flask
 Flask-CORS
+flasgger>=0.9.7

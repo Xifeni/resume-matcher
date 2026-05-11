@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   vllm:
-    build: .
+    build:
+      context: ./packages/api
+      dockerfile: Dockerfile
     container_name: vllm_service
     deploy:
       resources:
@@ -11,7 +13,7 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
-    command: python3 -m vllm.entrypoints.openai.api_server --model TheBloke/Llama-2-7B-Chat-AWQ --quantization awq --gpu-memory-utilization 0.85 --served-model-name llama-2-7b --max-model-len 1024 --enforce-eager --host 0.0.0.0 --chat-template "{% for message in messages %}{% if message['role'] == 'user' %}{{ '[INST] ' + message['content'] + ' [/INST]' }}{% elif message['role'] == 'system' %}{{ '<<SYS>>\\n' + message['content'] + '\\n<</SYS>>\\n\\n' }}{% elif message['role'] == 'assistant' %}{{ ' ' + message['content'] + ' ' }}{% endif %}{% endfor %}"
+    command: python3 -m vllm.entrypoints.openai.api_server --model Qwen/Qwen2.5-3B-Instruct-AWQ --quantization awq --gpu-memory-utilization 0.75 --served-model-name qwen2.5 --enforce-eager --host 0.0.0.0
     ports:
       - "8000:8000"
     volumes:
@@ -19,24 +21,32 @@ services:
     ipc: host
 
   app:
-    build: .
+    build:
+      context: ./packages/api
+      dockerfile: Dockerfile
     container_name: flask_app
     environment:
       - VLLM_URL=http://vllm:8000/v1
+      - SQLITE_PATH=/app/data/resume_matcher.db
+    volumes:
+      - resume_matcher_sqlite:/app/data
     ports:
-      - "5000:5000"
+      - "5001:5001"
     command: python3 app.py
     depends_on:
       - vllm
 
   frontend:
     build:
-      context: ./resume-matcher-front
+      context: ./packages/web
       dockerfile: Dockerfile
     container_name: vue_frontend
     ports:
       - "8080:80"
     environment:
-      - VITE_API_URL=http://localhost:5000
+      - VITE_API_URL=http://localhost:5001
     depends_on:
       - app
+
+volumes:
+  resume_matcher_sqlite:

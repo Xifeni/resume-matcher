@@ -1,6 +1,9 @@
 <template>
   <div :class="$style.previewContainer">
     <div v-if="isDocx" ref="docxContainer" :class="$style.docxWrapper"></div>
+    <div v-else-if="isDoc" :class="$style.empty">
+      Предпросмотр .doc в браузере недоступен; файл будет обработан на сервере.
+    </div>
     <embed
       v-else-if="isPdf"
       :src="fileUrl"
@@ -30,6 +33,11 @@ const isDocx = computed(
     props.file?.name.endsWith(".docx") ||
     props.file?.type ===
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+);
+const isDoc = computed(
+  () =>
+    props.file?.name.toLowerCase().endsWith(".doc") ||
+    props.file?.type === "application/msword",
 );
 
 const renderDocx = async () => {

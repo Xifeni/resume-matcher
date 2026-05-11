@@ -1,8 +1,12 @@
 {
-  "dependencies": {
-    "@element-plus/icons-vue": "^2.3.2",
-    "element-plus": "^2.13.7",
-    "pinia": "^3.0.4",
-    "vue-router": "^5.0.6"
+  "name": "resume-matcher",
+  "private": true,
+  "workspaces": [
+    "packages/web"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev -w @resume-matcher/web",
+    "build:web": "npm run build -w @resume-matcher/web",
+    "preview:web": "npm run preview -w @resume-matcher/web"
   }
 }

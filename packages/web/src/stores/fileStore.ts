@@ -10,6 +10,9 @@ export interface PredictionResult {
     llm_judge_score: number;
     reasoning: string;
   };
+  analysis_id?: number;
+  resume_id?: number;
+  vacancy_id?: number;
 }
 
 localforage.config({

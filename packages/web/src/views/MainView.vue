@@ -190,7 +190,7 @@
         action="#"
         :auto-upload="false"
         :show-file-list="false"
-        accept=".pdf,.docx"
+        accept=".pdf,.doc,.docx"
         @change="handleFileUpload"
       >
         <el-icon class="el-icon--upload"><UploadFilled /></el-icon>
@@ -202,7 +202,7 @@
             class="el-upload__tip"
             style="text-align: center; margin-top: 10px"
           >
-            Supported formats: PDF, DOCX
+            Supported formats: PDF, DOC, DOCX
           </div>
         </template>
       </el-upload>

@@ -3,21 +3,23 @@ version: "3.8"
 services:
   app:
     build:
-      context: .
+      context: ./packages/api
       dockerfile: Dockerfile.mac
     container_name: flask_app
     ports:
       - "5001:5001"
     environment:
       - VLLM_URL=${VLLM_URL}
+      - SQLITE_PATH=/app/data/resume_matcher.db
     volumes:
       - ~/.cache/huggingface:/root/.cache/huggingface
+      - resume_matcher_sqlite:/app/data
     networks:
       - app-network
 
   frontend:
     build:
-      context: ./resume-matcher-front
+      context: ./packages/web
       dockerfile: Dockerfile
     container_name: vue_frontend
     ports:
@@ -32,3 +34,6 @@ services:
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  resume_matcher_sqlite:
