@@ -156,3 +156,19 @@ def list_analyses_for_vacancy(vacancy_id: int) -> list[dict[str, Any]]:
             (vacancy_id,),
         ).fetchall()
         return [dict(row) for row in rows]
+
+def delete_resume(resume_id: int) -> None:
+    with get_connection() as conn:
+        conn.execute("DELETE FROM resumes WHERE id = ?", (resume_id,))
+
+def delete_vacancy(vacancy_id: int) -> None:
+    with get_connection() as conn:
+        conn.execute("DELETE FROM vacancies WHERE id = ?", (vacancy_id,))
+
+def delete_all_resumes() -> None:
+    with get_connection() as conn:
+        conn.execute("DELETE FROM resumes")
+
+def delete_all_vacancies() -> None:
+    with get_connection() as conn:
+        conn.execute("DELETE FROM vacancies")
