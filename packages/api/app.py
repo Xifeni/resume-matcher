@@ -699,6 +699,61 @@ def health():
     """
     return jsonify({"status": "ok"})
 
+@app.route("/resumes/<int:resume_id>", methods=["DELETE"])
+def delete_resume_endpoint(resume_id: int):
+    """
+    Удалить одно резюме по ID
+    ---
+    tags:
+      - Резюме
+    """
+    try:
+        db.delete_resume(resume_id)
+        return jsonify({"ok": True, "message": "Резюме удалено"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/resumes", methods=["DELETE"])
+def delete_all_resumes_endpoint():
+    """
+    Удалить все резюме
+    ---
+    tags:
+      - Резюме
+    """
+    try:
+        db.delete_all_resumes()
+        return jsonify({"ok": True, "message": "Все резюме удалены"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/vacancies/<int:vacancy_id>", methods=["DELETE"])
+def delete_vacancy_endpoint(vacancy_id: int):
+    """
+    Удалить одну вакансию по ID
+    ---
+    tags:
+      - Вакансии
+    """
+    try:
+        db.delete_vacancy(vacancy_id)
+        return jsonify({"ok": True, "message": "Вакансия удалена"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/vacancies", methods=["DELETE"])
+def delete_all_vacancies_endpoint():
+    """
+    Удалить все вакансии
+    ---
+    tags:
+      - Вакансии
+    """
+    try:
+        db.delete_all_vacancies()
+        return jsonify({"ok": True, "message": "Все вакансии удалены"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 SWAGGER_TEMPLATE = {
     "swagger": "2.0",
