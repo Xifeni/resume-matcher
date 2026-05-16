@@ -1,0 +1,12 @@
+{
+  "name": "resume-matcher",
+  "private": true,
+  "workspaces": [
+    "packages/web"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev -w @resume-matcher/web",
+    "build:web": "npm run build -w @resume-matcher/web",
+    "preview:web": "npm run preview -w @resume-matcher/web"
+  }
+}

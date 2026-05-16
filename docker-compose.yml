@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  vllm:
+    build:
+      context: ./packages/api
+      dockerfile: Dockerfile
+    container_name: vllm_service
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    command: python3 -m vllm.entrypoints.openai.api_server --model Qwen/Qwen2.5-3B-Instruct-AWQ --quantization awq --gpu-memory-utilization 0.75 --served-model-name qwen2.5 --enforce-eager --host 0.0.0.0
+    ports:
+      - "8000:8000"
+    volumes:
+      - ~/.cache/huggingface:/root/.cache/huggingface
+    ipc: host
+
+  app:
+    build:
+      context: ./packages/api
+      dockerfile: Dockerfile
+    container_name: flask_app
+    environment:
+      - VLLM_URL=http://vllm:8000/v1
+      - SQLITE_PATH=/app/data/resume_matcher.db
+    volumes:
+      - resume_matcher_sqlite:/app/data
+    ports:
+      - "5001:5001"
+    command: python3 app.py
+    depends_on:
+      - vllm
+
+  frontend:
+    build:
+      context: ./packages/web
+      dockerfile: Dockerfile
+    container_name: vue_frontend
+    ports:
+      - "8080:80"
+    environment:
+      - VITE_API_URL=http://localhost:5001
+    depends_on:
+      - app
+
+volumes:
+  resume_matcher_sqlite:
