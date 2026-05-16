@@ -1,8 +1,10 @@
-FROM nvidia/cuda:12.8.0-runtime-ubuntu22.04
+
+FROM nvidia/cuda:12.8.0-cudnn-runtime-ubuntu22.04
+
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y python3-pip git antiword && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y python3-pip git && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
 
