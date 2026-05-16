@@ -1,5 +1,8 @@
 import os
 from typing import Any
+import numpy as np
+import joblib
+
 
 from flasgger import Swagger
 from flask import Flask, jsonify, request
@@ -14,12 +17,13 @@ from parser import (
     save_upload_to_temp_path,
 )
 from ranker import ResumeRanker
+from custom_transformers import MyTransformer
 
 app = Flask(__name__)
 CORS(app)
 
 ranker = ResumeRanker()
-
+loaded_pipe = joblib.load('model_best_resume_matcher.pkl')
 
 def run_match_pipeline(resume_text: str, vacancy_text: str) -> dict[str, Any]:
     resume_emb = ranker.get_embeddings([resume_text])
@@ -30,7 +34,17 @@ def run_match_pipeline(resume_text: str, vacancy_text: str) -> dict[str, Any]:
     llm_score = llm_result.get("score", 0)
     reasoning = llm_result.get("reasoning", "")
 
-    final_score = (0.4 * semantic_score_100) + (0.6 * llm_score)
+    
+
+    # Использование
+    X_pipe = np.array([[llm_score,semantic_score]])
+    try:
+        y_pred = loaded_pipe.predict(X_pipe)
+        final_score = float(np.clip(y_pred[0], 0, 100))
+    except Exception as e:
+        # Fallback если модель не загрузилась
+        print(f"Ошибка пайплайна: {e}, используем fallback")
+        final_score = (0.4 * semantic_score_100) + (0.6 * llm_score)
 
     return {
         "final_score": round(final_score, 2),
