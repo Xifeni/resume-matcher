@@ -209,94 +209,7 @@
                 Match Analysis ({{ resultsTableData.length }} combinations)
               </h2>
 
-              <el-table
-                :data="resultsTableData"
-                border
-                style="width: 100%"
-                row-key="id"
-                :default-sort="{ prop: 'final_score', order: 'descending' }"
-              >
-                <el-table-column type="expand">
-                  <template #default="props">
-                    <div v-if="props.row.ok" :class="$style.reasoningWrapper">
-                      <h4>AI Reasoning</h4>
-                      <p :class="$style.reasoningText">
-                        {{ props.row.details.reasoning }}
-                      </p>
-
-                      <div :class="$style.detailedScores">
-                        <el-tag type="success"
-                          >Semantic:
-                          {{ props.row.details.semantic_similarity }}</el-tag
-                        >
-                        <el-tag type="warning" class="ml-2"
-                          >LLM Judge:
-                          {{ props.row.details.llm_judge_score }}</el-tag
-                        >
-                      </div>
-                    </div>
-                    <div v-else :class="$style.reasoningWrapper">
-                      <el-alert
-                        title="Error during analysis"
-                        type="error"
-                        :description="props.row.error"
-                        show-icon
-                      />
-                    </div>
-                  </template>
-                </el-table-column>
-
-                <el-table-column
-                  prop="vacancyName"
-                  label="Vacancy"
-                  min-width="200"
-                  show-overflow-tooltip
-                />
-                <el-table-column
-                  prop="resumeName"
-                  label="Resume"
-                  min-width="200"
-                  show-overflow-tooltip
-                />
-
-                <el-table-column label="Status" width="100" align="center">
-                  <template #default="scope">
-                    <el-tag :type="scope.row.ok ? 'success' : 'danger'">
-                      {{ scope.row.ok ? "Success" : "Error" }}
-                    </el-tag>
-                  </template>
-                </el-table-column>
-
-                <el-table-column
-                  prop="final_score"
-                  label="Score"
-                  width="180"
-                  sortable
-                  align="center"
-                >
-                  <template #default="scope">
-                    <el-progress
-                      v-if="scope.row.ok"
-                      :percentage="scope.row.final_score"
-                      :color="scoreColors"
-                    />
-                    <span v-else>-</span>
-                  </template>
-                </el-table-column>
-
-                <el-table-column width="60" align="center">
-                  <template #default="scope">
-                    <el-button
-                      type="danger"
-                      :icon="Close"
-                      circle
-                      text
-                      size="small"
-                      @click="removePredictionRow(scope.row)"
-                    />
-                  </template>
-                </el-table-column>
-              </el-table>
+              <ResultsTable :tableData="resultsTableData" />
             </div>
           </el-tab-pane>
         </el-tabs>
@@ -402,7 +315,7 @@
           </div>
         </div>
 
-        <div :class="$style.predictFormGroup" style="margin-top: 20px">
+        <div :class="$style.predictFormGroup" class="mt-5">
           <label>Select Vacancies</label>
           <div style="display: flex; gap: 10px">
             <el-select
@@ -462,9 +375,11 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
+
 import { useAuthStore } from "@/stores/auth";
 import { useFileStore } from "@/stores/fileStore";
 import FilePreview from "@/components/FilePreview.vue";
+import ResultsTable from "@/components/ResultsTable.vue";
 import {
   Document,
   Suitcase,
@@ -815,9 +730,6 @@ const logout = () => {
 .clearBtn:hover {
   background-color: #fef0f0;
 }
-.mr-2 {
-  margin-right: 8px;
-}
 
 .paginationContainer {
   display: flex;
@@ -829,6 +741,7 @@ const logout = () => {
   border-radius: 4px;
   border: 1px solid #e4e7ed;
 }
+
 .activeFileName {
   display: flex;
   align-items: center;
@@ -844,35 +757,10 @@ const logout = () => {
 .resultContainer {
   padding: 10px 0;
 }
+
 .resultTitle {
   margin-top: 0;
   margin-bottom: 20px;
   color: #303133;
-}
-.reasoningWrapper {
-  padding: 15px 30px;
-  background-color: #fafafa;
-  border-left: 4px solid #409eff;
-  border-radius: 4px;
-  margin: 10px 20px;
-}
-.reasoningWrapper h4 {
-  margin-top: 0;
-  margin-bottom: 10px;
-  color: #303133;
-}
-.reasoningText {
-  white-space: pre-wrap;
-  line-height: 1.6;
-  color: #606266;
-  font-size: 14px;
-  margin-bottom: 15px;
-}
-.detailedScores {
-  display: flex;
-  gap: 10px;
-}
-.ml-2 {
-  margin-left: 8px;
 }
 </style>

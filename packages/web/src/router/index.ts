@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import LoginView from "@/views/LoginView.vue";
 import MainView from "@/views/MainView.vue";
+import ResumeView from "@/views/ResumeView.vue";
+import VacancyView from "@/views/VacancyView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -16,6 +18,18 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: MainView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/resumes/:id",
+      name: "resume-view",
+      component: ResumeView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/vacancies/:id",
+      name: "vacancy-view",
+      component: VacancyView,
       meta: { requiresAuth: true },
     },
   ],
