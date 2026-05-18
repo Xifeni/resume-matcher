@@ -27,6 +27,13 @@ export interface StoredFile {
   file: File;
 }
 
+export interface StoredDocument {
+  id: number;
+  original_filename: string;
+  extracted_text: string;
+  created_at: string;
+}
+
 localforage.config({
   name: "ResumeMatcherApp",
   storeName: "files_store",
@@ -210,6 +217,16 @@ export const useFileStore = defineStore("files", () => {
     }
   };
 
+  const fetchResume = async (id: number): Promise<StoredDocument> => {
+    const response = await apiClient.get<StoredDocument>(`/resumes/${id}`);
+    return response.data;
+  };
+
+  const fetchVacancy = async (id: number): Promise<StoredDocument> => {
+    const response = await apiClient.get<StoredDocument>(`/vacancies/${id}`);
+    return response.data;
+  };
+
   const runPredict = async (resumeIds: number[], vacancyIds: number[]) => {
     isPredicting.value = true;
     predictAbortController.value = new AbortController();
@@ -278,5 +295,7 @@ export const useFileStore = defineStore("files", () => {
     removePredictionResult,
     abortPrediction,
     runPredict,
+    fetchResume,
+    fetchVacancy,
   };
 });

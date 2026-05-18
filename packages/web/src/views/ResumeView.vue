@@ -2,34 +2,36 @@
   <el-container :class="$style.documentLayout">
     <el-header :class="$style.documentHeader">
       <el-button @click="router.push('/')">Back</el-button>
-      <h3 :class="$style.documentTitle">
-        {{ fileObject?.name || "Resume Not Found" }}
-      </h3>
+      <h3 :class="$style.documentTitle">{{ title }}</h3>
     </el-header>
-    <el-main :class="$style.documentMain">
+    <el-main v-loading="loading" :class="$style.documentMain">
       <FilePreview v-if="fileObject" :file="fileObject" />
-      <div v-else :class="$style.notFound">
-        File not available in local storage.
+      <TextPreview
+        v-else-if="remoteDoc"
+        :text="remoteDoc.extracted_text"
+      />
+      <div v-else-if="loadError" :class="$style.notFound">
+        {{ loadError }}
       </div>
     </el-main>
   </el-container>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useFileStore } from "@/stores/fileStore";
 import FilePreview from "@/components/FilePreview.vue";
+import TextPreview from "@/components/TextPreview.vue";
+import { useStoredDocument } from "@/composables/useStoredDocument";
 
 const route = useRoute();
 const router = useRouter();
-const fileStore = useFileStore();
-
 const docId = Number(route.params.id);
 
-const fileObject = computed(() => {
-  return fileStore.resumeFiles.find((r) => r.id === docId)?.file || null;
-});
+const { fileObject, remoteDoc, loading, loadError, title } = useStoredDocument(
+  docId,
+  "resume",
+  "Resume Not Found",
+);
 </script>
 
 <style module>
