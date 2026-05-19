@@ -6,6 +6,8 @@ services:
       context: ./packages/api
       dockerfile: Dockerfile
     container_name: vllm_service
+    environment:
+      - VLLM_USE_FLASHINFER_SAMPLER=0
     deploy:
       resources:
         reservations:

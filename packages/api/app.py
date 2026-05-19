@@ -144,6 +144,24 @@ def _multipart_files_list() -> list:
     return [f for f in raw if f is not None]
 
 
+def _resume_to_json(row: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "id": row["id"],
+        "original_filename": row["original_filename"],
+        "extracted_text": row["extracted_text"],
+        "created_at": row["created_at"],
+    }
+
+
+def _vacancy_to_json(row: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "id": row["id"],
+        "original_filename": row["original_filename"],
+        "extracted_text": row["extracted_text"],
+        "created_at": row["created_at"],
+    }
+
+
 @app.route("/resumes/batch", methods=["POST"])
 def create_resumes_batch():
     """
@@ -370,6 +388,76 @@ def create_vacancies_batch():
 
     saved = sum(1 for r in results if r.get("ok"))
     return jsonify({"results": results, "total": len(results), "saved": saved})
+
+
+@app.route("/resumes/<int:resume_id>", methods=["GET"])
+def get_resume_endpoint(resume_id: int):
+    """
+    Получить резюме по ID
+    Возвращает метаданные и извлечённый текст из SQLite.
+    ---
+    tags:
+      - Резюме
+    parameters:
+      - in: path
+        name: resume_id
+        type: integer
+        required: true
+        description: Идентификатор резюме в БД
+    responses:
+      200:
+        description: Запись резюме
+        schema:
+          type: object
+          properties:
+            id: {type: integer}
+            original_filename: {type: string}
+            extracted_text: {type: string}
+            created_at: {type: string}
+      404:
+        description: Резюме не найдено
+        schema:
+          $ref: '#/definitions/Error'
+    """
+    row = db.get_resume(resume_id)
+    if not row:
+        return jsonify({"error": f"Резюме id={resume_id} не найдено"}), 404
+    return jsonify(_resume_to_json(row))
+
+
+@app.route("/vacancies/<int:vacancy_id>", methods=["GET"])
+def get_vacancy_endpoint(vacancy_id: int):
+    """
+    Получить вакансию по ID
+    Возвращает метаданные и извлечённый текст из SQLite.
+    ---
+    tags:
+      - Вакансии
+    parameters:
+      - in: path
+        name: vacancy_id
+        type: integer
+        required: true
+        description: Идентификатор вакансии в БД
+    responses:
+      200:
+        description: Запись вакансии
+        schema:
+          type: object
+          properties:
+            id: {type: integer}
+            original_filename: {type: string}
+            extracted_text: {type: string}
+            created_at: {type: string}
+      404:
+        description: Вакансия не найдена
+        schema:
+          $ref: '#/definitions/Error'
+    """
+    row = db.get_vacancy(vacancy_id)
+    if not row:
+        return jsonify({"error": f"Вакансия id={vacancy_id} не найдена"}), 404
+    return jsonify(_vacancy_to_json(row))
 
 
 @app.route("/vacancies/<int:vacancy_id>/analyses", methods=["GET"])
@@ -791,11 +879,11 @@ SWAGGER_TEMPLATE = {
     "tags": [
         {
             "name": "Резюме",
-            "description": "Одиночная и массовая загрузка резюме (PDF, DOCX, DOC)",
+            "description": "Загрузка, чтение и удаление резюме (PDF, DOCX, DOC)",
         },
         {
             "name": "Вакансии",
-            "description": "Одиночная и массовая загрузка вакансий (PDF, DOCX, DOC)",
+            "description": "Загрузка, чтение и удаление вакансий (PDF, DOCX, DOC)",
         },
         {"name": "Предикт", "description": "Одиночный и пакетный матчинг"},
         {"name": "Анализы", "description": "Чтение сохранённых результатов"},
